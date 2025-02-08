@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>50!!</title>
+    <style>
+        body {
+            background-color: mistyrose;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            transition: background-image 1s ease;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: turquoise;
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        #counter {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .floating-text {
+            position: absolute;
+            font-size: 40px;
+            font-weight: bold;
+            color: #800080;
+            animation: float 8s linear infinite;
+            opacity: 0;
+            user-select: none;
+        }
+        .fade-out {
+            animation: fadeOut 1s ease-in forwards;
+        }
+        .new-button {
+            opacity: 0;
+            padding: 40px 80px;  /* Doubled from 20px 40px */
+            font-size: 96px;     /* Doubled from 48px */
+            cursor: pointer;
+            background-color: turquoise;
+            border: none;
+            border-radius: 100px;  /* Doubled from 50px */
+            color: white;
+            font-weight: bold;
+            transition: opacity 1s ease-in;
+            pointer-events: none;
+        }
+        .show-button {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #barkyImage {
+            display: none;
+            max-width: 300px;
+            margin-top: 20px;
+        }
+        .shake {
+            animation: shake 0.5s infinite;
+        }
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--moveX), var(--moveY)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        #barkyHeader {
+            display: none;
+            font-size: 32px;
+            font-weight: bold;
+            color: purple;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .cake-button {
+            opacity: 0;
+            padding: 20px 40px;
+            font-size: 48px;
+            cursor: pointer;
+            background-color: turquoise;
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            transition: opacity 1s ease-in;
+            pointer-events: none;
+        }
+        .show-cake-button {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .floating-container {
+            position: fixed;
+            top: calc(50% + 50px);
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1000px;  /* Increased to accommodate third image */
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        .floating-mom-image {
+            width: 300px;
+            pointer-events: none;
+            animation: floatSideToSide 0.5s infinite;
+            transition: width 1s ease;
+        }
+        .birthday-message {
+            position: fixed;
+            top: 20%;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            color: purple;
+            font-weight: bold;
+            transition: font-size 1s ease;
+        }
+        .big-text {
+            font-size: 72px;  /* Three times bigger than original 24px */
+        }
+        @keyframes floatSideToSide {
+            0%, 100% {
+                transform: translateX(-5px) rotate(-5deg);
+            }
+            50% {
+                transform: translateX(5px) rotate(5deg);
+            }
+        }
+        .bouquet-container {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            opacity: 0;
+            transition: opacity 1s ease-in;
+        }
+        .bouquet-button {
+            font-size: 36px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            animation: bounce 1s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .tulip-background {
+            background-image: url('tulips.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .shrink-images {
+            width: 100px;  /* Shrunk to 1/3 of original size */
+        }
+        .new-mom-image {
+            opacity: 0;
+            transition: opacity 1s ease;
+            width: 100px;  /* Same size as shrunk images */
+        }
+        .hint-text {
+            position: fixed;
+            top: 50%;
+            font-size: 32px;
+            color: purple;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            display: none;
+        }
+        .hint-left {
+            left: 50px;
+            transform: translateY(-50%);
+        }
+        .hint-right {
+            right: 50px;
+            transform: translateY(-50%);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <button onclick="startCounting()" style="color: violet">! birthday button !</button>
+    <div id="counter"></div>
+    <button class="new-button" id="roofButton" onclick="showBarky()">🐕</button>
+    <h1 id="barkyHeader">BARKY SAYS HAPPY B-DAY ROOF!</h1>
+    <img id="barkyImage" src="BarkyBday.png" alt="Barky Birthday">
+    <button class="cake-button" id="cakeButton" onclick="showMomImages()">🎂</button>
+    <div class="birthday-message" id="birthdayText" style="display: none;">
+        Happy Birthday to You! 🎈 Happy birthday to you! 🎈 Happy birthday Mommy!!!! We love you! 💖
+    </div>
+    <div class="floating-container">
+        <img id="mombday" class="floating-mom-image" src="eMomBDay.jpeg" alt="Mombday" style="display: none;">
+        <img id="rosemombday" class="floating-mom-image" src="rMomBDay.jpeg" alt="Rose Mombday" style="display: none;">
+        <img id="newMomImage" class="floating-mom-image new-mom-image" src="mom!.jpeg" alt="Mom" style="display: none;">
+    </div>
+    <div class="bouquet-container" id="bouquetContainer" style="display: none;">
+        <button class="bouquet-button" onclick="showTulips()">💐</button>
+        <button class="bouquet-button" onclick="showTulips()">💐</button>
+        <button class="bouquet-button" onclick="showTulips()">💐</button>
+        <button class="bouquet-button" onclick="showTulips()">💐</button>
+        <button class="bouquet-button" onclick="showTulips()">💐</button>
+    </div>
+    <div id="hintLeft" class="hint-text hint-left">Click on a bouquet!</div>
+    <div id="hintRight" class="hint-text hint-right">Click on a bouquet!</div>
+
+    <script>
+        function startCounting() {
+            // Hide the button
+            document.querySelector('button').style.display = 'none';
+            
+            let count = 0;
+            const counterElement = document.getElementById('counter');
+            const interval = setInterval(() => {
+                count++;
+                counterElement.textContent = count;
+                
+                // Calculate size multiplier (1 to 4) based on count
+                const sizeMultiplier = 1 + (count / 50) * 3;
+                counterElement.style.transform = `scale(${sizeMultiplier})`;
+                
+                // Calculate hue for rainbow effect (0-360 degrees)
+                const hue = (count / 50) * 360;
+                counterElement.style.color = `hsl(${hue}, 100%, 50%)`;
+                
+                if (count >= 50) {
+                    clearInterval(interval);
+                    celebrate();
+                    
+                    // Start fade out after 4.5 seconds (2.5 seconds before text bubbles disappear)
+                    setTimeout(() => {
+                        counterElement.classList.add('fade-out');
+                        
+                        // Show new button after counter fades
+                        setTimeout(() => {
+                            const roofButton = document.getElementById('roofButton');
+                            roofButton.classList.add('show-button');
+                        }, 1000);
+                    }, 4500);
+                }
+            }, 100);
+        }
+
+        function celebrate() {
+            // Launch confetti from the left edge
+            confetti({
+                particleCount: 300,
+                spread: 70,
+                origin: { x: 0, y: 0.6 }
+            });
+
+            // Launch confetti from the right edge
+            confetti({
+                particleCount: 300,
+                spread: 70,
+                origin: { x: 1, y: 0.6 }
+            });
+
+            // Add balloon-like confetti in the middle
+            confetti({
+                particleCount: 120,
+                spread: 100,
+                origin: { x: 0.5, y: 0.7 },
+                shapes: ['circle'],
+                colors: ['#ff718d', '#ff9999', '#ff69b4', '#ffb6c1']
+            });
+
+            // Add raining hearts from the top
+            confetti({
+                particleCount: 150,
+                spread: 180,
+                origin: { x: 0.5, y: 0 },
+                scalar: 2,
+                shapes: ['heart'],
+                colors: ['#ff718d', '#ff9999', '#ff69b4', '#ffb6c1'],
+                ticks: 200
+            });
+
+            // Original WHOOOOP! bubbles
+            for (let i = 0; i < 10; i++) {
+                const text = document.createElement('div');
+                text.className = 'floating-text';
+                text.textContent = 'WHOOOOP!';
+                
+                // Random starting positions
+                text.style.left = `${Math.random() * 80 + 10}%`;
+                text.style.top = `${Math.random() * 80 + 10}%`;
+                
+                // Random movement directions
+                text.style.setProperty('--moveX', `${Math.random() * 400 - 200}px`);
+                text.style.setProperty('--moveY', `${Math.random() * -300 - 100}px`);
+                
+                document.body.appendChild(text);
+                
+                setTimeout(() => {
+                    text.remove();
+                }, 8000);
+            }
+
+            // Additional "You're 50!" bubbles
+            for (let i = 0; i < 5; i++) {
+                const text = document.createElement('div');
+                text.className = 'floating-text';
+                text.textContent = "You're 50!";
+                
+                // Random starting positions
+                text.style.left = `${Math.random() * 80 + 10}%`;
+                text.style.top = `${Math.random() * 80 + 10}%`;
+                
+                // Random movement directions
+                text.style.setProperty('--moveX', `${Math.random() * 400 - 200}px`);
+                text.style.setProperty('--moveY', `${Math.random() * -300 - 100}px`);
+                
+                document.body.appendChild(text);
+                
+                setTimeout(() => {
+                    text.remove();
+                }, 8000);
+            }
+        }
+
+        // Add custom heart shape for confetti
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        confetti.create(document.getElementById('canvas'), {
+            resize: true,
+            useWorker: true,
+        })({ shapes: ['heart'] });
+
+        const hearts = confetti.shapeFromPath({
+            path: 'M167 72c19,-38 37,-56 75,-56 42,0 76,33 76,75 0,76 -76,151 -151,227 -76,-76 -151,-151 -151,-227 0,-42 33,-75 75,-75 38,0 57,18 76,56z',
+            matrix: [0.06, 0, 0, 0.06, -10, -10]
+        });
+
+        confetti.shapeFromText({ text: '♥', scalar: 2 });
+
+        function showBarky() {
+            // Hide the button
+            const roofButton = document.getElementById('roofButton');
+            roofButton.style.display = 'none';
+
+            // Show and shake the image and header
+            const barkyImage = document.getElementById('barkyImage');
+            const barkyHeader = document.getElementById('barkyHeader');
+            
+            barkyImage.style.display = 'block';
+            barkyHeader.style.display = 'block';
+            
+            barkyImage.classList.add('shake');
+            barkyHeader.classList.add('shake');
+
+            // Stop shaking after 7.5 seconds and show cake button
+            setTimeout(() => {
+                barkyImage.classList.remove('shake');
+                barkyHeader.classList.remove('shake');
+                
+                // Fade out image and header
+                barkyImage.style.display = 'none';
+                barkyHeader.style.display = 'none';
+                
+                // Show cake button
+                const cakeButton = document.getElementById('cakeButton');
+                cakeButton.classList.add('show-cake-button');
+            }, 7500);
+        }
+
+        function showMomImages() {
+            // Hide the cake button
+            document.getElementById('cakeButton').style.display = 'none';
+            
+            // Show and animate both images and birthday text
+            const mombday = document.getElementById('mombday');
+            const rosemombday = document.getElementById('rosemombday');
+            const birthdayText = document.getElementById('birthdayText');
+            const bouquetContainer = document.getElementById('bouquetContainer');
+            
+            mombday.style.display = 'block';
+            rosemombday.style.display = 'block';
+            birthdayText.style.display = 'block';
+            bouquetContainer.style.display = 'flex';
+            
+            // Offset second image animation slightly
+            rosemombday.style.animationDelay = '0.5s';
+
+            // Fade in bouquet buttons immediately
+            setTimeout(() => {
+                bouquetContainer.style.opacity = '1';
+            }, 100);
+
+            // Show hint text after 5 seconds
+            setTimeout(() => {
+                const hintLeft = document.getElementById('hintLeft');
+                const hintRight = document.getElementById('hintRight');
+                
+                hintLeft.style.display = 'block';
+                hintRight.style.display = 'block';
+                
+                setTimeout(() => {
+                    hintLeft.style.opacity = '1';
+                    hintRight.style.opacity = '1';
+                }, 100);
+            }, 5000);
+        }
+
+        function showTulips() {
+            // Hide hint text
+            const hintLeft = document.getElementById('hintLeft');
+            const hintRight = document.getElementById('hintRight');
+            hintLeft.style.opacity = '0';
+            hintRight.style.opacity = '0';
+            setTimeout(() => {
+                hintLeft.style.display = 'none';
+                hintRight.style.display = 'none';
+            }, 500);
+
+            document.body.classList.add('tulip-background');
+            
+            // Shrink the existing images
+            const mombday = document.getElementById('mombday');
+            const rosemombday = document.getElementById('rosemombday');
+            mombday.classList.add('shrink-images');
+            rosemombday.classList.add('shrink-images');
+            
+            // Show and fade in the new image
+            const newMomImage = document.getElementById('newMomImage');
+            newMomImage.style.display = 'block';
+            newMomImage.classList.add('shrink-images');
+            setTimeout(() => {
+                newMomImage.style.opacity = '1';
+            }, 100);
+            
+            // Change the birthday message and make it bigger
+            const birthdayText = document.getElementById('birthdayText');
+            birthdayText.textContent = "We can't wait for our next adventure!!!";
+            birthdayText.classList.add('big-text');
+        }
+    </script>
+</body>
+</html> 
